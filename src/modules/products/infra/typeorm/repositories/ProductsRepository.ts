@@ -21,21 +21,57 @@ class ProductsRepository implements IProductsRepository {
     price,
     quantity,
   }: ICreateProductDTO): Promise<Product> {
-    // TODO
+    const product = await this.ormRepository.create({ name, price, quantity });
+
+    await this.ormRepository.save(product);
+
+    return product;
   }
 
   public async findByName(name: string): Promise<Product | undefined> {
-    // TODO
+    const findProduct = await this.ormRepository.findOne({ where: { name } });
+
+    return findProduct;
   }
 
   public async findAllById(products: IFindProducts[]): Promise<Product[]> {
-    // TODO
+    const findProductsById = products.map(product => product.id);
+
+    const retProducts = this.ormRepository.find({
+      where: { id: In(findProductsById) },
+    });
+
+    return retProducts;
   }
 
   public async updateQuantity(
     products: IUpdateProductsQuantityDTO[],
   ): Promise<Product[]> {
-    // TODO
+    // const findProductsById = products.map(product => product.id);
+    // let existentsProducts = [''];
+
+    // await this.ormRepository
+    //   .find({
+    //     select: ['id'],
+    //     where: { id: In(findProductsById) },
+    //   })
+    //   .then(productsFinded => {
+    //     existentsProducts = productsFinded.map(product => product.id);
+    //   });
+
+    // const newProductsQtde = products.filter(function ({ id, quantity }) {
+    //   if (existentsProducts.indexOf(id) !== -1) {
+    //     return {
+    //       id,
+    //       quantity:
+    //         findProductsById.filter(p => p.id === id)[0].quantity - quantity,
+    //     };
+    //   }
+
+    //   return [];
+    // });
+
+    return this.ormRepository.save(products);
   }
 }
 
